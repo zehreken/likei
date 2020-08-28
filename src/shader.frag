@@ -1,5 +1,13 @@
 #version 450
 
+layout(location=0) in vec3 v_color;
+layout(location=0) out vec4 f_color;
+
+void main() {
+    f_color = vec4(v_color, 1.0);
+}
+/*#version 450
+
 layout(location=0) out vec4 f_color;
 
 float circle(vec2 pos, float radius)
@@ -16,7 +24,7 @@ float box(vec2 pos, vec2 b)
 
 void main() {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 res = vec2(800, 600);
+    vec2 res = vec2(1600, 1200);
     vec2 uv = gl_FragCoord.xy / res.xy;
     uv -= 0.5;
     uv.x *= res.x / res.y; // remove the effect of aspect ratio
@@ -49,4 +57,4 @@ void main() {
     vec3 col = col_c - col_d + col_e + col_box1 + col_box2;
     
     f_color = vec4(col, 1.0);
-}
+}*/
