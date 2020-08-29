@@ -4,6 +4,7 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::{Window, WindowBuilder},
 };
+mod constants;
 
 struct State {
     surface: wgpu::Surface,
@@ -119,12 +120,16 @@ impl State {
             alpha_to_coverage_enabled: false,
         });
 
-        let vertex_buffer = device
-            .create_buffer_with_data(bytemuck::cast_slice(VERTICES), wgpu::BufferUsage::VERTEX);
-        let index_buffer =
-            device.create_buffer_with_data(bytemuck::cast_slice(INDICES), wgpu::BufferUsage::INDEX);
+        let vertex_buffer = device.create_buffer_with_data(
+            bytemuck::cast_slice(constants::VERTICES_PENTAGON),
+            wgpu::BufferUsage::VERTEX,
+        );
+        let index_buffer = device.create_buffer_with_data(
+            bytemuck::cast_slice(constants::INDICES_PENTAGON),
+            wgpu::BufferUsage::INDEX,
+        );
 
-        let num_indices = INDICES.len() as u32;
+        let num_indices = constants::INDICES_PENTAGON.len() as u32;
         Self {
             surface,
             adapter,
@@ -192,6 +197,23 @@ impl State {
     }
 }
 
+fn toggle_shape(state: &mut State) {
+    let vertex_buffer = state.device.create_buffer_with_data(
+        bytemuck::cast_slice(constants::VERTICES_QUAD),
+        wgpu::BufferUsage::VERTEX,
+    );
+    let index_buffer = state.device.create_buffer_with_data(
+        bytemuck::cast_slice(constants::INDICES_QUAD),
+        wgpu::BufferUsage::INDEX,
+    );
+
+    let num_indices = constants::INDICES_QUAD.len() as u32;
+
+    state.vertex_buffer = vertex_buffer;
+    state.index_buffer = index_buffer;
+    state.num_indices = num_indices;
+}
+
 fn main() {
     let event_loop = EventLoop::new();
     let window = WindowBuilder::new().build(&event_loop).unwrap();
@@ -213,6 +235,11 @@ fn main() {
                             virtual_keycode: Some(VirtualKeyCode::Escape),
                             ..
                         } => *control_flow = ControlFlow::Exit,
+                        KeyboardInput {
+                            state: ElementState::Pressed,
+                            virtual_keycode: Some(VirtualKeyCode::Space),
+                            ..
+                        } => toggle_shape(&mut state),
                         _ => {}
                     },
                     WindowEvent::Resized(physical_size) => {
@@ -241,7 +268,7 @@ fn main() {
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug)]
-struct Vertex {
+pub struct Vertex {
     position: [f32; 3],
     color: [f32; 3],
 }
@@ -270,28 +297,3 @@ impl Vertex {
 
 unsafe impl bytemuck::Pod for Vertex {}
 unsafe impl bytemuck::Zeroable for Vertex {}
-
-const VERTICES: &[Vertex] = &[
-    Vertex {
-        position: [-0.0868241, 0.49240386, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // A
-    Vertex {
-        position: [-0.49513406, 0.06958647, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // B
-    Vertex {
-        position: [-0.21918549, -0.44939706, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // C
-    Vertex {
-        position: [0.35966998, -0.3473291, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // D
-    Vertex {
-        position: [0.44147372, 0.2347359, 0.0],
-        color: [0.5, 0.0, 0.5],
-    }, // E
-];
-
-const INDICES: &[u16] = &[0, 1, 4, 1, 2, 4, 2, 3, 4];
