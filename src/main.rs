@@ -119,7 +119,7 @@ impl State {
 
         let diffuse_bytes = include_bytes!("pixil-frame-0.png");
         let (diffuse_texture, cmd_buffer) =
-            texture::Texture::from_bytes(&device, diffuse_bytes, "happy-tree.png").unwrap();
+            texture::Texture::from_bytes(&device, diffuse_bytes, "pixil-frame-0.png").unwrap();
 
         queue.submit(&[cmd_buffer]);
 
@@ -159,8 +159,8 @@ impl State {
             label: Some("diffuse_bind_group"),
         });
 
-        let vs_src = include_str!("shader_texture.vert");
-        let fs_src = include_str!("shader_texture.frag");
+        let vs_src = include_str!("shader_toy.vert");
+        let fs_src = include_str!("shader_toy.frag");
         let mut compiler = shaderc::Compiler::new().unwrap();
         let vs_spirv = compiler
             .compile_into_spirv(
